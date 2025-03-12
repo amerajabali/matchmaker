@@ -10,3 +10,155 @@
 
 </body>
 </html>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Match Maker</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+      .question {
+        margin-bottom: 15px;
+      }
+      #results {
+        margin-top: 20px;
+      }
+      .error {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+
+    <h1>Amira's Match Maker</h1>
+    <p>Answer the following five questions to calculate your compatibility score!</p>
+
+    <form id="matchForm">
+      <div class="question">
+        <label for="q1">1. How much do you enjoy outdoor activities?</label><br>
+        <input type="radio" name="q1" value="10"> A lot
+        <input type="radio" name="q1" value="5"> Somewhat
+        <input type="radio" name="q1" value="0"> Not at all
+        <div class="error-message" id="error-q1"></div>
+      </div>
+
+      <div class="question">
+        <label for="q2">2. How important is communication to you in a relationship?</label><br>
+        <input type="radio" name="q2" value="10"> Very important
+        <input type="radio" name="q2" value="5"> Somewhat important
+        <input type="radio" name="q2" value="0"> Not important
+        <div class="error-message" id="error-q2"></div>
+      </div>
+
+      <div class="question">
+        <label for="q3">3. Do you like traveling?</label><br>
+        <input type="radio" name="q3" value="10"> Yes, I love it
+        <input type="radio" name="q3" value="5"> Sometimes
+        <input type="radio" name="q3" value="0"> No, not really
+        <div class="error-message" id="error-q3"></div>
+      </div>
+
+      <div class="question">
+        <label for="q4">4. How important is humor to you in a partner?</label><br>
+        <input type="radio" name="q4" value="10"> Very important
+        <input type="radio" name="q4" value="5"> Somewhat important
+        <input type="radio" name="q4" value="0"> Not important
+        <div class="error-message" id="error-q4"></div>
+      </div>
+
+      <div class="question">
+        <label for="q5">5. How much do you value honesty?</label><br>
+        <input type="radio" name="q5" value="10"> Very highly
+        <input type="radio" name="q5" value="5"> Somewhat
+        <input type="radio" name="q5" value="0"> Not much
+        <div class="error-message" id="error-q5"></div>
+      </div>
+
+      <button type="submit">Submit</button>
+    </form>
+
+    <div id="results"></div>
+
+    <script>
+      // Constants
+      const QUESTION_IDS = ['q1', 'q2', 'q3', 'q4', 'q5'];
+      const MAX_SCORE = 50;
+      const QUESTION_SCORES = {
+        q1: [10, 5, 0], // Outdoor activities
+        q2: [10, 5, 0], // Communication
+        q3: [10, 5, 0], // Traveling
+        q4: [10, 5, 0], // Humor
+        q5: [10, 5, 0]  // Honesty
+      };
+
+      const MESSAGES = {
+        perfectMatch: "You're a perfect match! 🌟",
+        potentialMatch: "There's potential here! Keep exploring. ❤️",
+        growthPotential: "It might be a bit tricky, but everyone has room to grow. 🌱",
+        error: "Please answer all the questions before submitting."
+      };
+
+      // Function to validate user input
+      function validate() {
+        let isValid = true;
+        // Loop through each question to validate
+        QUESTION_IDS.forEach((qid) => {
+          const selectedAnswer = document.querySelector(`input[name="${qid}"]:checked`);
+          const errorMessageDiv = document.getElementById(`error-${qid}`);
+          if (!selectedAnswer) {
+            isValid = false;
+            errorMessageDiv.textContent = "This question is required!";
+          } else {
+            errorMessageDiv.textContent = "";
+          }
+        });
+        return isValid;
+      }
+
+      // Form submission handler
+      const form = document.getElementById("matchForm");
+      form.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        if (!validate()) {
+          return; // If validation fails, don't proceed
+        }
+
+        let totalScore = 0;
+        let questionScores = [];
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = ""; // Clear previous results
+
+        // Loop through each question and calculate scores
+        QUESTION_IDS.forEach((qid) => {
+          const selectedAnswer = document.querySelector(`input[name="${qid}"]:checked`);
+          const score = parseInt(selectedAnswer.value);
+          totalScore += score;
+          questionScores.push(`Question: ${qid.replace('q', '')}, Score: ${score}`);
+        });
+
+        // Display question scores
+        resultsDiv.innerHTML += "<h2>Compatibility Scores:</h2>";
+        questionScores.forEach(score => {
+          resultsDiv.innerHTML += `<p>${score}</p>`;
+        });
+
+        // Calculate and display overall score
+        const totalPercentage = (totalScore / MAX_SCORE) * 100; // Max score = 50
+        resultsDiv.innerHTML += `<h3>Total Compatibility Score: ${totalPercentage}%</h3>`;
+
+        // Display closing remark based on compatibility
+        if (totalPercentage >= 80) {
+          resultsDiv.innerHTML += `<p>${MESSAGES.perfectMatch}</p>`;
+        } else if (totalPercentage >= 50) {
+          resultsDiv.innerHTML += `<p>${MESSAGES.potentialMatch}</p>`;
+        } else {
+          resultsDiv.innerHTML += `<p>${MESSAGES.growthPotential}</p>`;
+        }
+      });
+    </script>
+
+  </body>
+</html>
